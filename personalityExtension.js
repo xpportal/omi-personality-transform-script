@@ -49,7 +49,11 @@ module.exports = {
             .argument('<personality>', 'What is the personality of the agent?')
             .argument('<defaultMessage>', 'Have a default message.')
             .action(({ args, options, logger }) =>
-                Session.create(io, logger, args.input, args.output));
+                Session.create(io, logger, args.input, args.output).transform(customTransform(options)));
     },
    };
 
+   function customTransform(options) {
+    return async (document) => {
+    };
+   }
