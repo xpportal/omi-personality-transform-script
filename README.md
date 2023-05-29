@@ -6,9 +6,9 @@ This extension allows users to assign personality attributes to a glTF node appe
 
 Usage:
 
-1. `npm install --global @gltf-transform/cli`
-2. `gltf-transform personality --config personalityExtension.js 'tubbypet.glb' 'output.glb' 'tubby' '#agent is cheery and says nya nya a lot' 'nya nya!'`
-3. `gltf-transform vrm --config vrmExtension.js tubbypet.glb output.glb`
+1. `npm install`
+2. `node script.js someobject.glb tubby '#agent is cheery and says nya nya a lot' https://localendpoint:8001 'nya nya!'`
+3. `node vrmOptimize.ts tubbypet.glb`
 
 # Extension Name
 
