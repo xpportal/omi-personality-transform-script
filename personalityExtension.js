@@ -37,11 +37,11 @@ class PersonalityProperties extends ExtensionProperty {
 
 const { ALL_EXTENSIONS } = require('@gltf-transform/extensions');
 
-export default {
+module.exports = {
     extensions: [...ALL_EXTENSIONS, Personality],
     onProgramReady: ({ program, io, Session }) => {
         program
-            .command('custom', 'Custom command')
+            .command('personality', 'Custom command')
             .help('Lorem ipsum dolorem...')
             .argument('<input>', 'Path to read glTF 2.0 (.glb, .gltf) model')
             .argument('<output>', 'Path to write output')

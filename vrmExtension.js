@@ -58,27 +58,19 @@ class VRMExtension extends Extension {
   }
 
   write(context) {
-    const jsonRoot = context.jsonDoc.json;
+    jsonRoot = context.jsonDoc.json;
 
-    const vrmProps = this.document
+    const currentVrmProperties = this.document
       .getRoot()
       .getExtension(VRMExtension.EXTENSION_NAME);
-    if (!vrmProps) {
+    if (!currentVrmProperties) {
       return this;
     }
-    const jsonNode = jsonRoot.nodes?.find(
-      (currentNode) => currentNode === node
-    );
-    if (!jsonNode) {
-      return this;
-    }
-    jsonNode.extensions = jsonNode.extensions || {};
     if (this.vrmData) {
-      this.document
-        .getRoot()
-        .setExtension(VRMExtension.EXTENSION_NAME, this.vrmData);
+      jsonRoot.extensions = jsonRoot.json.extensions || {};
+      jsonRoot.extensions[VRMExtension.EXTENSION_NAME] = currentVrmProperties;
     }
-    return this;
+		return this;
   }
 }
 
@@ -93,15 +85,6 @@ module.exports = {
       .argument("<input>", "Path to read glTF 2.0 (.glb, .gltf) model")
       .argument("<output>", "Path to write output")
       .action(({ args, options, logger }) =>
-        Session.create(io, logger, args.input, args.output).transform(
-          customTransform(options)
-        )
-      );
+        Session.create(io, logger, args.input, args.output));
   },
 };
-
-function customTransform(options) {
-  return async (document) => {
-    return document;
-  };
-}
