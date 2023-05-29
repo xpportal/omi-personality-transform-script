@@ -68,11 +68,7 @@ class VRMExtension extends Extension {
   }
 
   read(context) {
-    const vrmExtensions = context.jsonDoc.json.extensions?.VRM;
-    if (!vrmExtensions) {
-      return this;
-    }
-
+    const vrmExtensions = context.jsonDoc.json.extensions?.VRM || {};
     this.vrmData = vrmExtensions;
     return this;
   }
@@ -91,33 +87,28 @@ class VRMC_materials_mtoonExtension extends VRMExtension {
   extensionName = "VRMC_materials_mtoon";
   static EXTENSION_NAME = "VRMC_materials_mtoon";
 }
-class PersonalityProperties extends ExtensionProperty {
-  static EXTENSION_NAME = "OMI_personality";
-  extensionName = "OMI_personality";
-  propertyType = "Personality";
-  parentTypes = [PropertyType.NODE];
 
-  getDefaults() {
-    return Object.assign(super.getDefaults(), {
-      agent: "tubby",
-      personality: "#agent is cheery",
-      defaultMessage: "nya nya!",
-    });
-  }
-}
-
-class Personality extends Extension {
+class OMI_personalityExtension extends Extension {
   extensionName = "OMI_personality";
   static EXTENSION_NAME = "OMI_personality";
-  createPersonality(name = "") {
-    return new PersonalityProperties(this.document.getGraph(), name);
+  personalityData = {};
+  init(options) {
+    this.personalityData["agent"] = options["agent"]
+    this.personalityData["personality"] = options["personality"]
+    this.personalityData["host"] = options["host"]
+    this.personalityData["defaultMessage"] = options["defaultMessage"]
+    return this.personalityData;
   }
 
   read(context) {
+    this.personalityData = context.jsonDoc.json.extensions?.OMI_personality || {};
     return this;
   }
 
   write(context) {
+    const jsonRoot = context.jsonDoc.json;
+    jsonRoot.extensions = jsonRoot.extensions || {};
+    jsonRoot.extensions[OMI_personalityExtension.EXTENSION_NAME] = this.personalityData;
     return this;
   }
 }
@@ -131,15 +122,21 @@ function removeExtension(filename) {
 
 async function main() {
   const inputFile = process.argv[2];
-  // Configure I/O.
   const io = new NodeIO().registerExtensions([
     VRMExtension,
     VRMC_materials_mtoonExtension,
-    Personality,
+    OMI_personalityExtension,
     ...KHRONOS_EXTENSIONS,
   ]);
   const document = await io.read(inputFile);
-  const outputFile = removeExtension(process.argv[2]);
+  options = {}
+  options["agent"] = process.argv[3];
+  options["personality"] = process.argv[4];
+  options["host"] = process.argv[5];
+  options["defaultMessage"] = process.argv[6];
+  const personality = document.createExtension(OMI_personalityExtension);
+  await personality.init(options);
+  const outputFile = removeExtension(process.argv[2]); 
   await document.transform(
     // Losslessly resample animation frames.
     resample(),
@@ -148,14 +145,13 @@ async function main() {
     // Remove duplicate vertex or texture data, if any.
     dedup(),
     simplify({ simplifier: MeshoptSimplifier }),
-    textureResize()
+    textureResize(),
     // Caution against use on VRMs.
     // draco(),
     // meshopt(),
   );
-  const binary = await io.writeBinary(document);
-  await io.write(outputFile + "_output.glb", document);
+  const binary = await io.writeJSON(document);
+  await io.write(outputFile + "_output.gltf", document);
 }
 
 main();
-
