@@ -8,7 +8,7 @@ Usage:
 
 1. `npm install`
 2. `node .\personalityOptimize.js .\tubbypet.glb "tubby" "#agent is cheery" "https://localhost:8001/somespell" "nya nya!"`
-3. `node vrmOptimize.ts tubbypet.glb`
+3. `node .\personalityOptimize.js tubbypet.glb`
 
 # Extension Name
 
