@@ -138,12 +138,8 @@ async function main() {
     Personality,
     ...KHRONOS_EXTENSIONS,
   ]);
-  // Read from URL.
-  console.log(inputFile)
   const document = await io.read(inputFile);
   const outputFile = removeExtension(process.argv[2]);
-
-  // Write to byte array (Uint8Array).
   await document.transform(
     // Losslessly resample animation frames.
     resample(),
