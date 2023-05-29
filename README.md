@@ -7,7 +7,7 @@ This extension allows users to assign personality attributes to a glTF node appe
 Usage:
 
 1. `npm install`
-2. `node .\personalityOptimize.js .\tubbypet.glb "tubby" "#agent is cheery" "https://localhost:8001/somespell" "nya nya!"`
+2. `node .\personalityOptimize.js .\tubbypet.glb "tubby" "#agent is cheery" "nya nya!"`
 3. `node .\personalityOptimize.js tubbypet.glb`
 
 # Extension Name
