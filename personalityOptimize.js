@@ -28,7 +28,12 @@ const {
   ReaderContext,
   NodeIO,
 } = require("@gltf-transform/core");
-const { KHRONOS_EXTENSIONS } = require("@gltf-transform/extensions");
+const {
+  KHRONOS_EXTENSIONS,
+  InstancedMesh,
+} = require("@gltf-transform/extensions");
+const { meshoptimizer } = require("meshoptimizer");
+const { MeshoptSimplifier } = require("meshoptimizer");
 
 const {
   resample,
@@ -36,9 +41,12 @@ const {
   dedup,
   textureCompress,
   meshopt,
+  textureResize,
+  simplify,
+  instance,
+  quantize,
 } = require("@gltf-transform/functions");
 const { Document } = require("@gltf-transform/core");
-const { meshoptimizer } = require("meshoptimizer");
 
 class VRMProperties extends ExtensionProperty {
   init() {}
@@ -114,16 +122,25 @@ class Personality extends Extension {
   }
 }
 
+function removeExtension(filename) {
+  if (filename == null) {
+    return "optimize";
+  }
+  return filename.substring(0, filename.lastIndexOf(".")) || filename;
+}
+
 async function main() {
+  const inputFile = process.argv[2];
   // Configure I/O.
   const io = new NodeIO().registerExtensions([
     VRMExtension,
     VRMC_materials_mtoonExtension,
     Personality,
     ...KHRONOS_EXTENSIONS,
-  ])
+  ]);
   // Read from URL.
-  const document = await io.read("./tubbypet.glb");
+  const document = await io.read(inputFile);
+  const outputFile = removeExtension(process.argv[3]);
 
   // Write to byte array (Uint8Array).
   await document.transform(
@@ -132,9 +149,16 @@ async function main() {
     // Remove unused nodes, textures, or other data.
     prune(),
     // Remove duplicate vertex or texture data, if any.
-    dedup());
-  await io.write('output.gltf', document);
-  const glb = await io.writeJSON(document);
+    dedup(),
+    simplify({ simplifier: MeshoptSimplifier }),
+    instance(),
+    textureResize()
+    // Caution against use on VRMs.
+    // draco(),
+    // meshopt(),
+  );
+  const binary = await io.writeBinary(document);
+  await io.write(outputFile + "_output.glb", document);
 }
 
 main();
