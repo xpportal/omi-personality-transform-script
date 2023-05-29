@@ -4,9 +4,11 @@
 
 This extension allows users to assign personality attributes to a glTF node appended to a file. The attributes include `agent`, `personality`, and `defaultMessage`. Currently this extension is only compatible with MagickML but will be adjusted to be interoperable with others as more options are available.
 
-Usage: 
-1) `npm install`
-2) `node script.js someobject.glb tubby '#agent is cheery and says nya nya a lot' 'nya nya!'`
+Usage:
+
+1. `npm install --global @gltf-transform/cli`
+2. `node script.js tubbypet.glb tubby '#agent is cheery and says nya nya a lot' 'nya nya!'`
+3. `gltf-transform vrm --config vrmExtension.js tubbypet.glb output.glb`
 
 # Extension Name
 
@@ -25,6 +27,7 @@ Node extension
 # JSON Schema
 
 The following JSON schema defines the extension properties:
+
 ```json
 {
   "definitions": {
@@ -48,9 +51,11 @@ The following JSON schema defines the extension properties:
   }
 }
 ```
+
 # Example
 
 Here is an example of how the extension can be used in a glTF file:
+
 ```json
 {
   "nodes": [
@@ -65,6 +70,6 @@ Here is an example of how the extension can be used in a glTF file:
       }
     }
   ],
-  "extensionsUsed": [ "OMI_personality" ]
+  "extensionsUsed": ["OMI_personality"]
 }
 ```

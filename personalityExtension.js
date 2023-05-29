@@ -4,24 +4,20 @@ const { Document, Extension, ExtensionProperty, PropertyType, WriterContext } = 
 class Personality extends Extension {
     extensionName = 'OMI_personality';
     static EXTENSION_NAME = 'OMI_personality';
-    /** Creates a new Emitter property, for use on a Node. */
     createPersonality(name = '') {
-        return new PersonalityProps(this.document.getGraph(), name);
+        return new PersonalityProperties(this.document.getGraph(), name);
     }
 
-    /** See https://github.com/donmccurdy/glTF-Transform/blob/main/packages/core/src/io/reader-context.ts */
     read(context) {
-        throw new Error('OMI_personality: read() not implemented');
+        return this;
     }
 
-    /** See https://github.com/donmccurdy/glTF-Transform/blob/main/packages/core/src/io/writer-context.ts */
     write(context) {
-		console.log("WRITE");
 		return this;
     }
 }
 
-class PersonalityProps extends ExtensionProperty {
+class PersonalityProperties extends ExtensionProperty {
     static EXTENSION_NAME = 'OMI_personality';
 
     init() {
@@ -38,3 +34,22 @@ class PersonalityProps extends ExtensionProperty {
 		});
     }
 }
+
+const { ALL_EXTENSIONS } = require('@gltf-transform/extensions');
+
+export default {
+    extensions: [...ALL_EXTENSIONS, Personality],
+    onProgramReady: ({ program, io, Session }) => {
+        program
+            .command('custom', 'Custom command')
+            .help('Lorem ipsum dolorem...')
+            .argument('<input>', 'Path to read glTF 2.0 (.glb, .gltf) model')
+            .argument('<output>', 'Path to write output')
+            .argument('<agent>', 'Name of the agent.')
+            .argument('<personality>', 'What is the personality of the agent?')
+            .argument('<defaultMessage>', 'Have a default message.')
+            .action(({ args, options, logger }) =>
+                Session.create(io, logger, args.input, args.output));
+    },
+   };
+
