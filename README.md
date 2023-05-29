@@ -22,13 +22,7 @@ Original vs Optimized:
 2. Anata_1070_Guilty_v2.glb: 14M -> Anata_1070_Guilty_v2_output.glb: 11M
 3. tubbypet.glb: 1.8M -> tubbypets_output.glb: 380K
 
-Size Reduction:
-
-1. 42.86%
-2. 21.43%
-3. 78.89%
-
-The optimizer reduced file sizes by 42.86%, 21.43%, and 78.89% for the three files. The overall performance depends on the specific use case and requirements. idea of how much it was able to compress the files.
+The overall performance depends on the specific use case and requirements.
 
 # Extension Type
 
