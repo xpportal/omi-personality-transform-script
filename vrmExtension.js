@@ -38,7 +38,7 @@ class VRMProperties extends ExtensionProperty {
 }
 
 class VRMExtension extends Extension {
-  extensionName = 'VRM';
+  extensionName = "VRM";
   static EXTENSION_NAME = "VRM";
   vrmData = null;
   vrmProperties;
@@ -60,39 +60,48 @@ class VRMExtension extends Extension {
   write(context) {
     const jsonRoot = context.jsonDoc.json;
 
-    this.document
+    const vrmProps = this.document
       .getRoot()
-      .listNodes()
-      .forEach((node) => {
-        const vrmProps = node.getExtension(VRMExtension.EXTENSION_NAME);
-        if (!vrmProps) return;
-
-        const jsonNode = jsonRoot.nodes?.find(
-          (currentNode) => currentNode === node
-        );
-        if (jsonNode) {
-          jsonNode.extensions = jsonNode.extensions || {};
-          if (this.vrmData) {
-            jsonNode.extensions[VRMExtension.EXTENSION_NAME] = this.vrmData;
-          }
-        }
-      });
+      .getExtension(VRMExtension.EXTENSION_NAME);
+    if (!vrmProps) {
+      return this;
+    }
+    const jsonNode = jsonRoot.nodes?.find(
+      (currentNode) => currentNode === node
+    );
+    if (!jsonNode) {
+      return this;
+    }
+    jsonNode.extensions = jsonNode.extensions || {};
+    if (this.vrmData) {
+      this.document
+        .getRoot()
+        .setExtension(VRMExtension.EXTENSION_NAME, this.vrmData);
+    }
     return this;
   }
 }
 
-const { ALL_EXTENSIONS } = require('@gltf-transform/extensions');
+const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 
 module.exports = {
   extensions: [...ALL_EXTENSIONS, VRMExtension],
   onProgramReady: ({ program, io, Session }) => {
     program
-      .command('vrm', 'VRM process')
-      .help('Import vrm')
-      .argument('<input>', 'Path to read glTF 2.0 (.glb, .gltf) model')
-      .argument('<output>', 'Path to write output')
+      .command("vrm", "VRM process")
+      .help("Import vrm")
+      .argument("<input>", "Path to read glTF 2.0 (.glb, .gltf) model")
+      .argument("<output>", "Path to write output")
       .action(({ args, options, logger }) =>
-        Session.create(io, logger, args.input, args.output)
+        Session.create(io, logger, args.input, args.output).transform(
+          customTransform(options)
+        )
       );
   },
 };
+
+function customTransform(options) {
+  return async (document) => {
+    return document;
+  };
+}
