@@ -117,16 +117,15 @@ class Personality extends Extension {
 async function main() {
   // Configure I/O.
   const io = new NodeIO().registerExtensions([
-    ...KHRONOS_EXTENSIONS,
     VRMExtension,
     VRMC_materials_mtoonExtension,
     Personality,
+    ...KHRONOS_EXTENSIONS,
   ])
   // Read from URL.
   const document = await io.read("./tubbypet.glb");
 
   // Write to byte array (Uint8Array).
-  const glb = await io.writeBinary(document);
   await document.transform(
     // Losslessly resample animation frames.
     resample(),
@@ -134,6 +133,8 @@ async function main() {
     prune(),
     // Remove duplicate vertex or texture data, if any.
     dedup());
+  await io.write('output.gltf', document);
+  const glb = await io.writeJSON(document);
 }
 
 main();
