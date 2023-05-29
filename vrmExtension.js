@@ -66,10 +66,11 @@ class VRMExtension extends Extension {
     if (!currentVrmProperties) {
       return this;
     }
-    if (this.vrmData) {
-      jsonRoot.extensions = jsonRoot.json.extensions || {};
-      jsonRoot.extensions[VRMExtension.EXTENSION_NAME] = currentVrmProperties;
+    if (!this.vrmData) {
+      return this;
     }
+    jsonRoot.extensions = jsonRoot.json.extensions || {};
+    jsonRoot.extensions[VRMExtension.EXTENSION_NAME] = this.vrmData;
 		return this;
   }
 }
