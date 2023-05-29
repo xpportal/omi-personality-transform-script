@@ -139,8 +139,9 @@ async function main() {
     ...KHRONOS_EXTENSIONS,
   ]);
   // Read from URL.
+  console.log(inputFile)
   const document = await io.read(inputFile);
-  const outputFile = removeExtension(process.argv[3]);
+  const outputFile = removeExtension(process.argv[2]);
 
   // Write to byte array (Uint8Array).
   await document.transform(
@@ -151,7 +152,6 @@ async function main() {
     // Remove duplicate vertex or texture data, if any.
     dedup(),
     simplify({ simplifier: MeshoptSimplifier }),
-    instance(),
     textureResize()
     // Caution against use on VRMs.
     // draco(),
@@ -162,3 +162,4 @@ async function main() {
 }
 
 main();
+
