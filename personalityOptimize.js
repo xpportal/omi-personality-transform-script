@@ -34,6 +34,8 @@ const {
 } = require("@gltf-transform/extensions");
 const { meshoptimizer } = require("meshoptimizer");
 const { MeshoptSimplifier } = require("meshoptimizer");
+const fs = require('fs');
+
 
 const {
   resample,
@@ -121,14 +123,18 @@ function removeExtension(filename) {
 }
 
 async function main() {
-  const inputFile = process.argv[2];
-  const io = new NodeIO().registerExtensions([
+	const inputFile = process.argv[2];
+	const tempFile = removeExtension(inputFile) + "_temp.glb";
+  
+	// Copy the vrm file to a temporary glb file.
+	fs.copyFileSync(inputFile, tempFile);
+	  const io = new NodeIO().registerExtensions([
     VRMExtension,
     VRMC_materials_mtoonExtension,
     OMI_personalityExtension,
     ...KHRONOS_EXTENSIONS,
   ]);
-  const document = await io.read(inputFile);
+  const document = await io.read(tempFile);
   options = {}
   options["agent"] = process.argv[3];
   options["personality"] = process.argv[4];
@@ -150,8 +156,15 @@ async function main() {
     // draco(),
     // meshopt(),
   );
-  const binary = await io.writeJSON(document);
-  await io.write(outputFile + "_output.gltf", document);
+  // Write the glb output to a temporary file.
+  const tempOutputFile = outputFile + "_output.glb";
+  await io.write(tempOutputFile, document);
+
+  // Rename the output file to vrm.
+  fs.renameSync(tempOutputFile, outputFile + "_output.vrm");
+
+  // Remove the temporary glb file.
+  fs.unlinkSync(tempFile);
 }
 
 main();
