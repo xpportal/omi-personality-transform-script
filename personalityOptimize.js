@@ -122,12 +122,12 @@ function removeExtension(filename) {
 }
 
 async function main() {
-	const inputFile = process.argv[2];
-	const tempFile = removeExtension(inputFile) + "_temp.glb";
-  
-	// Copy the vrm file to a temporary glb file.
-	fs.copyFileSync(inputFile, tempFile);
-	  const io = new NodeIO().registerExtensions([
+  const inputFile = process.argv[2];
+  const tempFile = removeExtension(inputFile) + "_temp.glb";
+
+  // Copy the vrm file to a temporary glb file.
+  fs.copyFileSync(inputFile, tempFile);
+  const io = new NodeIO().registerExtensions([
     VRMExtension,
     VRMC_materials_mtoonExtension,
     OMI_personalityExtension,
