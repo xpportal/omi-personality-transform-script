@@ -97,7 +97,6 @@ class OMI_personalityExtension extends Extension {
   init(options) {
     this.personalityData["agent"] = options["agent"]
     this.personalityData["personality"] = options["personality"]
-    this.personalityData["host"] = options["host"]
     this.personalityData["defaultMessage"] = options["defaultMessage"]
     return this.personalityData;
   }
@@ -138,8 +137,7 @@ async function main() {
   options = {}
   options["agent"] = process.argv[3];
   options["personality"] = process.argv[4];
-  options["host"] = process.argv[5];
-  options["defaultMessage"] = process.argv[6];
+  options["defaultMessage"] = process.argv[5];
   const personality = document.createExtension(OMI_personalityExtension);
   await personality.init(options);
   const outputFile = removeExtension(process.argv[2]); 
